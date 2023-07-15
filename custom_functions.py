@@ -74,9 +74,19 @@ def get_data_summary(data_path = None, data= None, desc_sm = False, no_unq = Fal
 
 
 # write function displaying our model metrics
-def our_metrics(y_true, y_pred):
+def our_metrics(y_true, y_pred, normalize=True):
     cm = confusion_matrix(y_true, y_pred)
-    sns.heatmap(cm, cmap="YlGnBu", annot=True);
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        sns.heatmap(cm, cmap="YlGnBu", annot=True);
+        print('Model Metrics and Normalized Confusion Matrix')
+        print("_____________________")
+        print("_____________________")
+    else:
+        print('Model Metrics and Confusion Matrix without Normalization')
+        print("_____________________")
+        print("_____________________")
+        sns.heatmap(cm, cmap="YlGnBu", annot=True);
     print("Accuracy:", round(accuracy_score(y_true, y_pred), 4))
     print("_____________________")
     print('F1-score:', round(f1_score(y_true, y_pred), 4))
