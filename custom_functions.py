@@ -257,3 +257,4 @@ def class_metrics_var_threshold(fitted_model, X_test, y_test, threshold=0.5):
     print ('Report : ')
     print (classification_report(y_test, y_pred) )
     print('____________________')
+    return proba
