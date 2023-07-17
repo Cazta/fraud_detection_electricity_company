@@ -193,3 +193,67 @@ if (__name__ == "__main__"):
     print(get_f15())
     print(get_f2())
     print(get_f3())
+
+
+
+import pandas as pd
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report 
+
+
+def describe_my_model(fitted_model):
+  """
+  returns est. model intercept, coefficient and set model hyperparamenters.
+  required arguments: fitted model
+  """
+  # return est. model intercept as df
+  interc_dict = {' ' : fitted_model.intercept_[0]}
+  df_model_intercept = pd.DataFrame.from_dict(interc_dict, orient='index', columns=['est. model intercept'])
+
+  # return est. feature coefficients as df:
+  coef_list = []
+  coef_dict = {}
+  for coef in fitted_model.coef_:
+    coef_list = coef.tolist()
+  keys = range(len(coef_list))
+  values = coef_list
+  for i in keys:
+    coef_dict[i] = values[i]
+  df_model_coef = pd.DataFrame.from_dict(coef_dict, orient="index", columns=['est. feature coefficients'])
+
+  # return used hyperparameters as df:  
+  df_model_params = pd.DataFrame.from_dict(fitted_model.get_params(), orient="index", columns=['set hyperparameters'])
+
+  # display all df:
+  display(df_model_intercept, df_model_coef, df_model_params)
+
+
+
+
+def class_metrics_var_threshold(fitted_model, X_test, y_test, threshold=0.5):
+    """
+    function to compute confusion matrix and classification metrics based on passed threshold.
+    required arguments: fitted model, X_test, y_test, threshold (float, default >= 0.5)
+    """
+    # predicted probabilities based on fitted model
+    proba = fitted_model.predict_proba(X_test)
+    
+    # predicted y based on passed threshold
+    y_pred = [int(i>=threshold) for i in proba[:,1]]
+
+    # random line for nicer output :)
+    print('____________________')
+
+    # confusion matrix of actual y and predicted y
+    print ('Confusion Matrix :')
+    conf_matrix = confusion_matrix(y_test, y_pred)
+    print(conf_matrix)
+    print('____________________')
+
+    # accuracy score of confusion matrix
+    print ('Accuracy Score :',accuracy_score(y_test, y_pred) )
+    print('____________________')
+
+    # classification report of confusion matrix
+    print ('Report : ')
+    print (classification_report(y_test, y_pred) )
+    print('____________________')
